@@ -4,9 +4,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import np.com.bimalkafle.miniclip.R
 import np.com.bimalkafle.miniclip.databinding.VideoItemRowBinding
+import np.com.bimalkafle.miniclip.model.UserModel
 import np.com.bimalkafle.miniclip.model.VideoModel
 
 class VideoListAdapter(
@@ -16,11 +22,33 @@ class VideoListAdapter(
 
     inner class VideoViewHolder(private val binding : VideoItemRowBinding) : RecyclerView.ViewHolder(binding.root){
         fun bindVideo(videoModel: VideoModel){
+            //bindUserData
+            Firebase.firestore.collection("users")
+                .document(videoModel.uploaderId)
+                .get().addOnSuccessListener {
+                    val userModel = it?.toObject(UserModel::class.java)
+                    userModel?.apply {
+                        binding.usernameView.text = username
+                        //bind profilepic
+                        Glide.with(binding.profileIcon).load(profilePic)
+                            .circleCrop()
+                            .apply(
+                                RequestOptions().placeholder(R.drawable.icon_profile)
+                            )
+                            .into(binding.profileIcon)
+
+                    }
+                }
+
+            binding.captionView.text = videoModel.title
+            binding.progressBar.visibility = View.VISIBLE
+
 
             //bindVideo
             binding.videoView.apply {
                 setVideoPath(videoModel.url)
                 setOnPreparedListener {
+                    binding.progressBar.visibility = View.GONE
                     it.start()
                     it.isLooping = true
                 }
