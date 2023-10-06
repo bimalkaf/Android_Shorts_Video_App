@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import np.com.bimalkafle.miniclip.adapter.VideoListAdapter
@@ -30,8 +31,10 @@ class MainActivity : AppCompatActivity() {
                     startActivity(Intent(this,VideoUploadActivity::class.java))
                 }
                 R.id.bottom_menu_profile->{
-                    UiUtil.showToast(this,"Profile")
                     //Goto ProfileActivity
+                    val intent = Intent(this,ProfileActivity::class.java)
+                    intent.putExtra("profile_user_id", FirebaseAuth.getInstance().currentUser?.uid )
+                    startActivity(intent)
                 }
             }
             false
