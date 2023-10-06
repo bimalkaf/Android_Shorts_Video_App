@@ -1,5 +1,6 @@
 package np.com.bimalkafle.miniclip.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,8 +9,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import np.com.bimalkafle.miniclip.ProfileActivity
 import np.com.bimalkafle.miniclip.R
 import np.com.bimalkafle.miniclip.databinding.VideoItemRowBinding
 import np.com.bimalkafle.miniclip.model.UserModel
@@ -22,6 +25,7 @@ class VideoListAdapter(
 
     inner class VideoViewHolder(private val binding : VideoItemRowBinding) : RecyclerView.ViewHolder(binding.root){
         fun bindVideo(videoModel: VideoModel){
+
             //bindUserData
             Firebase.firestore.collection("users")
                 .document(videoModel.uploaderId)
@@ -36,6 +40,13 @@ class VideoListAdapter(
                                 RequestOptions().placeholder(R.drawable.icon_profile)
                             )
                             .into(binding.profileIcon)
+
+                        binding.userDetailLayout.setOnClickListener {
+                            val intent = Intent(binding.userDetailLayout.context, ProfileActivity::class.java)
+                            intent.putExtra("profile_user_id", id )
+                            binding.userDetailLayout.context.startActivity(intent)
+                        }
+
 
                     }
                 }
